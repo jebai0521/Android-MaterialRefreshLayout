@@ -34,7 +34,7 @@ public class ScrollViewActivity extends BaseActivity implements View.OnClickList
             }
 
             @Override
-            public void onfinish() {
+            public void onFinish() {
                 Toast.makeText(ScrollViewActivity.this, "finish", Toast.LENGTH_LONG).show();
             }
         });

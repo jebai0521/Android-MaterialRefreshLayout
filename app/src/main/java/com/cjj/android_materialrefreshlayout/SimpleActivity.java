@@ -2,17 +2,18 @@ package com.cjj.android_materialrefreshlayout;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
@@ -45,12 +46,23 @@ public class SimpleActivity extends BaseActivity {
 
                     }
                 }, 3000);
-                materialRefreshLayout.finishRefreshLoadMore();
 
             }
 
             @Override
-            public void onfinish() {
+            public void onRefreshLoadMore(final MaterialRefreshLayout materialRefreshLayout) {
+                Toast.makeText(SimpleActivity.this, "load more", Toast.LENGTH_LONG).show();
+                materialRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        materialRefreshLayout.finishRefreshLoadMore();
+
+                    }
+                }, 3000);
+            }
+
+            @Override
+            public void onFinish() {
                 Toast.makeText(SimpleActivity.this, "finish", Toast.LENGTH_LONG).show();
             }
 

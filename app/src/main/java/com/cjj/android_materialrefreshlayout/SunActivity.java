@@ -26,7 +26,6 @@ public class SunActivity extends BaseActivity{
         final ListView listView = (ListView) findViewById(R.id.lv);
         listView.setAdapter(new android.widget.ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array));
         materialRefreshLayout = (MaterialRefreshLayout) findViewById(R.id.refresh);
-        materialRefreshLayout.setSunStyle(true);
         materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
             @Override
             public void onRefresh(final MaterialRefreshLayout materialRefreshLayout) {
@@ -41,7 +40,7 @@ public class SunActivity extends BaseActivity{
             }
 
             @Override
-            public void onfinish() {
+            public void onFinish() {
                 Toast.makeText(SunActivity.this, "finish", Toast.LENGTH_LONG).show();
             }
 

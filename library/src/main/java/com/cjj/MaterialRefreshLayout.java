@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPropertyAnimatorCompat;
-import android.support.v4.view.ViewPropertyAnimatorUpdateListener;
+
+import androidx.core.view.ViewCompat;
+import androidx.core.view.ViewPropertyAnimatorCompat;
+import androidx.core.view.ViewPropertyAnimatorUpdateListener;
+
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,6 +21,8 @@ import android.widget.FrameLayout;
 
 public class MaterialRefreshLayout extends FrameLayout {
 
+    private static final String TAG = MaterialRefreshLayout.class.getSimpleName();
+
     public static final String Tag = MaterialRefreshLayout.class.getSimpleName();
     private final static int DEFAULT_WAVE_HEIGHT = 140;
     private final static int HIGHER_WAVE_HEIGHT = 180;
@@ -30,7 +34,6 @@ public class MaterialRefreshLayout extends FrameLayout {
 
     private MaterialHeaderView mMaterialHeaderView;
     private MaterialFooterView mMaterialFooterView;
-    private SunLayout mSunLayout;
     private boolean isOverlay;
     private int waveType;
     private int waveColor;
@@ -45,19 +48,9 @@ public class MaterialRefreshLayout extends FrameLayout {
     private float waveHeight;
     private int[] colorSchemeColors;
     private int colorsId;
-    private int progressTextColor;
-    private int progressValue, progressMax;
-    private boolean showArrow = true;
-    private int textType;
     private MaterialRefreshListener refreshListener;
-    private boolean showProgressBg;
-    private int progressBg;
-    private boolean isShowWave;
-    private int progressSizeType;
-    private int progressSize = 0;
     private boolean isLoadMoreing;
     private boolean isLoadMore;
-    private boolean isSunStyle = false;
 
     public MaterialRefreshLayout(Context context) {
         this(context, null, 0);
@@ -91,33 +84,15 @@ public class MaterialRefreshLayout extends FrameLayout {
         if (waveType == 0) {
             headHeight = DEFAULT_HEAD_HEIGHT;
             waveHeight = DEFAULT_WAVE_HEIGHT;
-            MaterialWaveView.DefaulHeadHeight = DEFAULT_HEAD_HEIGHT;
-            MaterialWaveView.DefaulWaveHeight = DEFAULT_WAVE_HEIGHT;
         } else {
             headHeight = hIGHER_HEAD_HEIGHT;
             waveHeight = HIGHER_WAVE_HEIGHT;
-            MaterialWaveView.DefaulHeadHeight = hIGHER_HEAD_HEIGHT;
-            MaterialWaveView.DefaulWaveHeight = HIGHER_WAVE_HEIGHT;
         }
         waveColor = t.getColor(R.styleable.MaterialRefreshLayout_wave_color, Color.WHITE);
-        isShowWave = t.getBoolean(R.styleable.MaterialRefreshLayout_wave_show, true);
 
         /**attrs for circleprogressbar*/
         colorsId = t.getResourceId(R.styleable.MaterialRefreshLayout_progress_colors, R.array.material_colors);
         colorSchemeColors = context.getResources().getIntArray(colorsId);
-        showArrow = t.getBoolean(R.styleable.MaterialRefreshLayout_progress_show_arrow, true);
-        textType = t.getInt(R.styleable.MaterialRefreshLayout_progress_text_visibility, 1);
-        progressTextColor = t.getColor(R.styleable.MaterialRefreshLayout_progress_text_color, Color.BLACK);
-        progressValue = t.getInteger(R.styleable.MaterialRefreshLayout_progress_value, 0);
-        progressMax = t.getInteger(R.styleable.MaterialRefreshLayout_progress_max_value, 100);
-        showProgressBg = t.getBoolean(R.styleable.MaterialRefreshLayout_progress_show_circle_backgroud, true);
-        progressBg = t.getColor(R.styleable.MaterialRefreshLayout_progress_backgroud_color, CircleProgressBar.DEFAULT_CIRCLE_BG_LIGHT);
-        progressSizeType = t.getInt(R.styleable.MaterialRefreshLayout_progress_size_type, 0);
-        if (progressSizeType == 0) {
-            progressSize = DEFAULT_PROGRESS_SIZE;
-        } else {
-            progressSize = BIG_PROGRESS_SIZE;
-        }
         isLoadMore = t.getBoolean(R.styleable.MaterialRefreshLayout_isLoadMore, false);
         t.recycle();
     }
@@ -139,48 +114,23 @@ public class MaterialRefreshLayout extends FrameLayout {
         setWaveHeight(Util.dip2px(context, waveHeight));
         setHeaderHeight(Util.dip2px(context, headHeight));
 
-        if (isSunStyle) {
-            mSunLayout = new SunLayout(context);
-            LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Util.dip2px(context, hIGHER_HEAD_HEIGHT));
-            layoutParams.gravity = Gravity.TOP;
-            mSunLayout.setVisibility(View.GONE);
-            setHeaderView(mSunLayout);
-        } else {
-            mMaterialHeaderView = new MaterialHeaderView(context);
-            LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Util.dip2px(context, hIGHER_HEAD_HEIGHT));
-            layoutParams.gravity = Gravity.TOP;
-            mMaterialHeaderView.setLayoutParams(layoutParams);
-            mMaterialHeaderView.setWaveColor(isShowWave ? waveColor : Color.TRANSPARENT);
-            mMaterialHeaderView.showProgressArrow(showArrow);
-            mMaterialHeaderView.setProgressSize(progressSize);
-            mMaterialHeaderView.setProgressColors(colorSchemeColors);
-            mMaterialHeaderView.setProgressStokeWidth(PROGRESS_STOKE_WIDTH);
-            mMaterialHeaderView.setTextType(textType);
-            mMaterialHeaderView.setProgressTextColor(progressTextColor);
-            mMaterialHeaderView.setProgressValue(progressValue);
-            mMaterialHeaderView.setProgressValueMax(progressMax);
-            mMaterialHeaderView.setIsProgressBg(showProgressBg);
-            mMaterialHeaderView.setProgressBg(progressBg);
-            mMaterialHeaderView.setVisibility(View.GONE);
-            setHeaderView(mMaterialHeaderView);
-        }
+        mMaterialHeaderView = new MaterialHeaderView(context);
+        LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Util.dip2px(context, hIGHER_HEAD_HEIGHT));
+        layoutParams.gravity = Gravity.TOP;
+        mMaterialHeaderView.setLayoutParams(layoutParams);
+        mMaterialHeaderView.setVisibility(View.GONE);
+        setHeaderView(mMaterialHeaderView);
 
 
         mMaterialFooterView = new MaterialFooterView(context);
         LayoutParams layoutParams2 = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Util.dip2px(context, hIGHER_HEAD_HEIGHT));
         layoutParams2.gravity = Gravity.BOTTOM;
         mMaterialFooterView.setLayoutParams(layoutParams2);
-        mMaterialFooterView.showProgressArrow(showArrow);
-        mMaterialFooterView.setProgressSize(progressSize);
-        mMaterialFooterView.setProgressColors(colorSchemeColors);
-        mMaterialFooterView.setProgressStokeWidth(PROGRESS_STOKE_WIDTH);
-        mMaterialFooterView.setTextType(textType);
-        mMaterialFooterView.setProgressValue(progressValue);
-        mMaterialFooterView.setProgressValueMax(progressMax);
-        mMaterialFooterView.setIsProgressBg(showProgressBg);
-        mMaterialFooterView.setProgressBg(progressBg);
         mMaterialFooterView.setVisibility(View.GONE);
-        setFooderView(mMaterialFooterView);
+        setFooterView(mMaterialFooterView);
+
+        removeView(mChildView);
+        addView(mChildView);
     }
 
 
@@ -199,16 +149,13 @@ public class MaterialRefreshLayout extends FrameLayout {
                     if (mMaterialHeaderView != null) {
                         mMaterialHeaderView.setVisibility(View.VISIBLE);
                         mMaterialHeaderView.onBegin(this);
-                    } else if (mSunLayout != null) {
-                        mSunLayout.setVisibility(View.VISIBLE);
-                        mSunLayout.onBegin(this);
                     }
                     return true;
                 } else if (dy < 0 && !canChildScrollDown() && isLoadMore) {
                     if (mMaterialFooterView != null && !isLoadMoreing) {
                         soveLoadMoreLogic();
                     }
-                    return super.onInterceptTouchEvent(ev);
+                    return true;//super.onInterceptTouchEvent(ev);
                 }
                 break;
         }
@@ -216,17 +163,18 @@ public class MaterialRefreshLayout extends FrameLayout {
     }
 
     private void soveLoadMoreLogic() {
-        isLoadMoreing = true;
+//        isLoadMoreing = true;
         mMaterialFooterView.setVisibility(View.VISIBLE);
         mMaterialFooterView.onBegin(this);
-        mMaterialFooterView.onRefreshing(this);
-        if (refreshListener != null) {
-            refreshListener.onRefreshLoadMore(MaterialRefreshLayout.this);
-        }
+//        mMaterialFooterView.onRefreshing(this);
+//        if (refreshListener != null) {
+//            refreshListener.onRefreshLoadMore(MaterialRefreshLayout.this);
+//        }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
+        Log.d(TAG, "onTouchEvent:" + isRefreshing);
         if (isRefreshing) {
             return super.onTouchEvent(e);
         }
@@ -235,22 +183,42 @@ public class MaterialRefreshLayout extends FrameLayout {
             case MotionEvent.ACTION_MOVE:
                 mCurrentY = e.getY();
                 float dy = mCurrentY - mTouchY;
+                Log.d(TAG, "ACTION_MOVE: dy --> " + dy);
                 dy = Math.min(mWaveHeight * 2, dy);
-                dy = Math.max(0, dy);
+
                 if (mChildView != null) {
-                    float offsetY = decelerateInterpolator.getInterpolation(dy / mWaveHeight / 2) * dy / 2;
-                    float fraction = offsetY / mHeadHeight;
-                    if (mMaterialHeaderView != null) {
-                        mMaterialHeaderView.getLayoutParams().height = (int) offsetY;
-                        mMaterialHeaderView.requestLayout();
-                        mMaterialHeaderView.onPull(this, fraction);
-                    } else if (mSunLayout != null) {
-                        mSunLayout.getLayoutParams().height = (int) offsetY;
-                        mSunLayout.requestLayout();
-                        mSunLayout.onPull(this, fraction);
+                    if (dy > 0) {
+                        float offsetY = decelerateInterpolator.getInterpolation(dy / mWaveHeight / 2) * dy / 2;
+                        Log.d(TAG, "ACTION_MOVE: offsetY --> " + offsetY);
+                        float fraction = offsetY / mHeadHeight;
+                        if (mMaterialHeaderView != null) {
+                            mMaterialHeaderView.getLayoutParams().height = (int) offsetY;
+                            mMaterialHeaderView.requestLayout();
+                            mMaterialHeaderView.onPull(this, fraction);
+                        }
+                        if (!isOverlay)
+                            ViewCompat.setTranslationY(mChildView, offsetY);
+                    } else if (dy < 0) {
+                        dy = Math.abs(dy);
+                        float offsetY = decelerateInterpolator.getInterpolation(dy / mWaveHeight / 2) * dy / 2;
+                        Log.d(TAG, "ACTION_MOVE: offsetY --> " + offsetY);
+                        float fraction = offsetY / mHeadHeight;
+                        if (mMaterialFooterView != null) {
+                            mMaterialFooterView.getLayoutParams().height = (int) offsetY;
+                            mMaterialFooterView.requestLayout();
+                            mMaterialFooterView.onPull(this, fraction);
+                        }
+                        if (!isOverlay)
+                            ViewCompat.setTranslationY(mChildView, -offsetY);
                     }
-                    if (!isOverlay)
-                        ViewCompat.setTranslationY(mChildView, offsetY);
+//                dy = Math.max(0, dy);
+//                    float offsetY = decelerateInterpolator.getInterpolation(dy / mWaveHeight / 2) * dy / 2;
+//                    float fraction = offsetY / mHeadHeight;
+//                    if (mMaterialHeaderView != null) {
+//                        mMaterialHeaderView.getLayoutParams().height = (int) offsetY;
+//                        mMaterialHeaderView.requestLayout();
+//                        mMaterialHeaderView.onPull(this, fraction);
+//                    }
 
                 }
                 return true;
@@ -279,43 +247,15 @@ public class MaterialRefreshLayout extends FrameLayout {
                                 createAnimatorTranslationY(mChildView, 0, mMaterialHeaderView);
                             }
                         }
-                    } else if (mSunLayout != null) {
-                        if (isOverlay) {
-                            if (mSunLayout.getLayoutParams().height > mHeadHeight) {
+                    } else {
 
-                                updateListener();
-
-                                mSunLayout.getLayoutParams().height = (int) mHeadHeight;
-                                mSunLayout.requestLayout();
-
-                            } else {
-                                mSunLayout.getLayoutParams().height = 0;
-                                mSunLayout.requestLayout();
-                            }
-
-                        } else {
-                            if (ViewCompat.getTranslationY(mChildView) >= mHeadHeight) {
-                                createAnimatorTranslationY(mChildView, mHeadHeight, mSunLayout);
-                                updateListener();
-                            } else {
-                                createAnimatorTranslationY(mChildView, 0, mSunLayout);
-                            }
-                        }
                     }
-
-
                 }
                 return true;
         }
 
-        return super.
+        return super.onTouchEvent(e);
 
-                onTouchEvent(e);
-
-    }
-
-    public void setSunStyle(boolean isSunStyle) {
-        this.isSunStyle = isSunStyle;
     }
 
     public void autoRefresh() {
@@ -331,14 +271,6 @@ public class MaterialRefreshLayout extends FrameLayout {
                             mMaterialHeaderView.requestLayout();
                         } else {
                             createAnimatorTranslationY(mChildView, mHeadHeight, mMaterialHeaderView);
-                        }
-                    } else if (mSunLayout != null) {
-                        mSunLayout.setVisibility(View.VISIBLE);
-                        if (isOverlay) {
-                            mSunLayout.getLayoutParams().height = (int) mHeadHeight;
-                            mSunLayout.requestLayout();
-                        } else {
-                            createAnimatorTranslationY(mChildView, mHeadHeight, mSunLayout);
                         }
                     }
 
@@ -370,8 +302,6 @@ public class MaterialRefreshLayout extends FrameLayout {
 
         if (mMaterialHeaderView != null) {
             mMaterialHeaderView.onRefreshing(MaterialRefreshLayout.this);
-        } else if (mSunLayout != null) {
-            mSunLayout.onRefreshing(MaterialRefreshLayout.this);
         }
 
         if (refreshListener != null) {
@@ -388,30 +318,9 @@ public class MaterialRefreshLayout extends FrameLayout {
         this.colorSchemeColors = colors;
     }
 
-    public void setShowArrow(boolean showArrow) {
-        this.showArrow = showArrow;
-    }
-
-    public void setShowProgressBg(boolean showProgressBg) {
-        this.showProgressBg = showProgressBg;
-    }
-
-    public void setWaveColor(int waveColor) {
-        this.waveColor = waveColor;
-    }
-
-    public void setWaveShow(boolean isShowWave) {
-        this.isShowWave = isShowWave;
-    }
-
     public void setIsOverLay(boolean isOverLay) {
         this.isOverlay = isOverLay;
     }
-
-//    public void setProgressValue(int progressValue) {
-//        this.progressValue = progressValue;
-//        mMaterialHeaderView.setProgressValue(progressValue);
-//    }
 
     public void createAnimatorTranslationY(final View v, final float h, final FrameLayout fl) {
         ViewPropertyAnimatorCompat viewPropertyAnimatorCompat = ViewCompat.animate(v);
@@ -476,8 +385,6 @@ public class MaterialRefreshLayout extends FrameLayout {
     public void setWaveHigher() {
         headHeight = hIGHER_HEAD_HEIGHT;
         waveHeight = HIGHER_WAVE_HEIGHT;
-        MaterialWaveView.DefaulHeadHeight = hIGHER_HEAD_HEIGHT;
-        MaterialWaveView.DefaulWaveHeight = HIGHER_WAVE_HEIGHT;
     }
 
     public void finishRefreshing() {
@@ -491,16 +398,13 @@ public class MaterialRefreshLayout extends FrameLayout {
 
             if (mMaterialHeaderView != null) {
                 mMaterialHeaderView.onComlete(MaterialRefreshLayout.this);
-            } else if (mSunLayout != null) {
-                mSunLayout.onComlete(MaterialRefreshLayout.this);
             }
 
             if (refreshListener != null) {
-                refreshListener.onfinish();
+                refreshListener.onFinish();
             }
         }
         isRefreshing = false;
-        progressValue = 0;
     }
 
     public void finishRefresh() {
@@ -533,8 +437,8 @@ public class MaterialRefreshLayout extends FrameLayout {
         setHeaderView(headerView);
     }
 
-    public void setFooderView(final View fooderView) {
-        this.addView(fooderView);
+    public void setFooterView(final View footerView) {
+        addView(footerView);
     }
 
 

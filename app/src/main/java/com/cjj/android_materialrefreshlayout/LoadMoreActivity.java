@@ -1,12 +1,7 @@
 package com.cjj.android_materialrefreshlayout;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
@@ -47,7 +48,7 @@ public class LoadMoreActivity extends BaseActivity {
             }
 
             @Override
-            public void onfinish() {
+            public void onFinish() {
                 Toast.makeText(LoadMoreActivity.this, "finish", Toast.LENGTH_LONG).show();
             }
 
@@ -82,12 +83,8 @@ public class LoadMoreActivity extends BaseActivity {
             switch (menuItem.getItemId()) {
 
                 case R.id.style0:
-                    materialRefreshLayout.setWaveColor(0xff8BC34A);
                     materialRefreshLayout.setIsOverLay(false);
-                    materialRefreshLayout.setWaveShow(true);
-                    materialRefreshLayout.setShowProgressBg(true);
                     materialRefreshLayout.setProgressColors(getResources().getIntArray(R.array.material_colors));
-                    materialRefreshLayout.setShowArrow(true);
                     break;
                 case R.id.style1:
 

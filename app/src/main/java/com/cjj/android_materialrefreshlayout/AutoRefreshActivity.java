@@ -41,7 +41,7 @@ public class AutoRefreshActivity extends BaseActivity {
             }
 
             @Override
-            public void onfinish() {
+            public void onFinish() {
                 Toast.makeText(AutoRefreshActivity.this, "finish", Toast.LENGTH_LONG).show();
             }
 

@@ -3,17 +3,18 @@ package com.cjj.android_materialrefreshlayout;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
@@ -36,9 +37,6 @@ public class WaveActivity extends BaseActivity {
 
         materialRefreshLayout = (MaterialRefreshLayout) findViewById(R.id.refresh);
 
-        materialRefreshLayout.setWaveShow(true);
-        materialRefreshLayout.setWaveColor(Color.parseColor("#60ff2020"));
-
         materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
             @Override
             public void onRefresh(final MaterialRefreshLayout materialRefreshLayout) {
@@ -54,7 +52,7 @@ public class WaveActivity extends BaseActivity {
             }
 
             @Override
-            public void onfinish() {
+            public void onFinish() {
                 Toast.makeText(WaveActivity.this, "finish", Toast.LENGTH_LONG).show();
             }
 
